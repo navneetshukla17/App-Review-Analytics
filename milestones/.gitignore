@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+backend/review_data.db
+backend/smoke_reviews.db
+.DS_Store
