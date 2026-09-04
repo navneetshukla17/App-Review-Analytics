@@ -28,18 +28,30 @@ class AppStoreScraper(PlatformScraper):
         )
         resp.raise_for_status()
         results = resp.json().get("results", [])
-        return [
-            AppCandidate(
-                platform=self.platform,
-                store_app_id=str(r["trackId"]),
-                name=r.get("trackName", ""),
-                developer=r.get("sellerName"),
-                icon_url=r.get("artworkUrl100"),
-                rating=r.get("averageUserRating"),
-            )
-            for r in results
-            if r.get("trackId")
-        ]
+        candidates = []
+        for r in results:
+            try:
+                # Skip if not a dict or missing trackId
+                if not isinstance(r, dict) or not r.get("trackId"):
+                    continue
+                
+                candidate = AppCandidate(
+                    platform=self.platform,
+                    store_app_id=str(r.get("trackId", "")),
+                    name=str(r.get("trackName", "")) if r.get("trackName") else "",
+                    developer=str(r.get("sellerName", "")) if r.get("sellerName") else None,
+                    icon_url=str(r.get("artworkUrl100", "")) if r.get("artworkUrl100") else None,
+                    rating=float(r.get("averageUserRating", 0)) if r.get("averageUserRating") else None,
+                )
+                candidates.append(candidate)
+            except (TypeError, ValueError, AttributeError):
+                # Skip malformed results
+                continue
+        return candidates
+
+    def estimate_total_reviews(self, app_id: str, country: str = "in") -> int:
+        """Apple RSS feed maxes out at 10 pages x 50 reviews = 500 total"""
+        return 500  # Apple's hard limit per country
 
     def review_batches(self, app_id: str, country: str = "in"):
         for page in range(1, MAX_PAGES + 1):

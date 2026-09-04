@@ -1,6 +1,6 @@
 import threading
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 
 from app.jobs import run_fetch_job
 from app.schemas import JobOut
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/api", tags=["jobs"])
 
 
 @router.post("/apps/{app_id}/fetch", response_model=JobOut)
-def start_fetch(request: Request, app_id: int):
+def start_fetch(request: Request, app_id: int, limit: int = Query(None)):
     db = request.app.state.db
     registry = request.app.state.registry
     app_row = db.get_app(app_id)
@@ -19,7 +19,7 @@ def start_fetch(request: Request, app_id: int):
     state = registry.create(job_id, app_id)
     threading.Thread(
         target=run_fetch_job,
-        args=(db, registry, job_id),
+        args=(db, registry, job_id, limit),
         daemon=True,
     ).start()
     return JobOut(id=state.id, app_id=state.app_id, status=state.status,

@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Install system dependencies needed for python packages (if any)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    sqlite3 \
+    libpq-dev gcc \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
@@ -31,8 +31,7 @@ EXPOSE 8000
 # Set environment variables
 ENV HOST=0.0.0.0
 ENV PORT=8000
-# The DB_PATH will be overridden by Fly.io to point to the volume
-ENV DB_PATH=/app/data/review_data.db
+# DATABASE_URL should be provided by the host environment (Render, Neon, etc.)
 
 # Run uvicorn
 CMD uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT

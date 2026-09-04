@@ -55,7 +55,7 @@ class JobRegistry:
                 state.message = message
 
 
-def run_fetch_job(db: Database, registry: JobRegistry, job_id: int, scrapers=None) -> None:
+def run_fetch_job(db: Database, registry: JobRegistry, job_id: int, limit: int = None, scrapers=None) -> None:
     """Background worker: page through reviews, upsert into DB, update progress."""
     scrapers = scrapers or SCRAPERS
     job_row = db.get_job(job_id)
@@ -80,6 +80,10 @@ def run_fetch_job(db: Database, registry: JobRegistry, job_id: int, scrapers=Non
             db.insert_reviews(rows)
             total += len(batch)
             registry.update(job_id, fetched_count=total)
+            
+            # Stop if limit reached
+            if limit and total >= limit:
+                break
         db.finish_job(job_id, "completed", total)
         registry.update(job_id, status="completed")
     except Exception as exc:  # noqa: BLE001 - surface any fetch failure to the job

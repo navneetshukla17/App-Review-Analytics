@@ -10,7 +10,7 @@ from .jobs import JobRegistry
 from .routers import apps, jobs, reviews
 
 _default_db_path = Path(__file__).resolve().parent.parent / "review_data.db"
-DB_PATH = Path(os.getenv("DB_PATH", _default_db_path))
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{_default_db_path}")
 FRONTEND_DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 
 
@@ -20,7 +20,7 @@ def create_app(db: Database, registry: JobRegistry) -> FastAPI:
     app.state.registry = registry
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", "*"],
         allow_methods=["*"],
         allow_headers=["*"],
     )
@@ -32,6 +32,6 @@ def create_app(db: Database, registry: JobRegistry) -> FastAPI:
     return app
 
 
-_db = Database(DB_PATH)
+_db = Database(DATABASE_URL)
 _registry = JobRegistry()
 app = create_app(_db, _registry)

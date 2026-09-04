@@ -27,12 +27,19 @@ export const createApp = (candidate) =>
 
 export const listApps = () => request(`${API}/apps`);
 
+export const estimateReviews = (appId) =>
+  request(`${API}/apps/${appId}/review-estimate`);
+
 export const getReviews = (appId, params) =>
   request(`${API}/apps/${appId}/reviews?${new URLSearchParams(params)}`);
 
 export const getStats = (appId) => request(`${API}/apps/${appId}/stats`);
 
-export const startFetch = (appId) => request(`${API}/apps/${appId}/fetch`, { method: 'POST' });
+export const startFetch = (appId, limit = null) => {
+  const params = new URLSearchParams();
+  if (limit) params.append('limit', limit);
+  return request(`${API}/apps/${appId}/fetch${params.toString() ? '?' + params.toString() : ''}`, { method: 'POST' });
+};
 
 export const getJob = (jobId) => request(`${API}/jobs/${jobId}`);
 

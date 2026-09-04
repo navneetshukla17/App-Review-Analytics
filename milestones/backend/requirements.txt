@@ -3,3 +3,4 @@ uvicorn[standard]==0.34.0
 google-play-scraper==1.2.7
 textblob==0.18.0.post0
 requests==2.32.3
+psycopg2-binary==2.9.10

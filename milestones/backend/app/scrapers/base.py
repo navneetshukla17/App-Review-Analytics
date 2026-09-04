@@ -36,6 +36,10 @@ class PlatformScraper(ABC):
         """Yield list[ReviewItem] batches, one page at a time."""
         ...
 
+    def estimate_total_reviews(self, app_id: str, country: str = "in") -> int:
+        """Estimate total available reviews. Override in subclass for accuracy."""
+        return 10000  # Default conservative estimate
+
 
 def to_iso(value) -> str | None:
     if value is None:

@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: review-insights
+    env: docker
+    plan: free
+    healthCheckPath: /api/apps
+    envVars:
+      - key: DATABASE_URL
+        sync: false # User needs to enter the Neon PostgreSQL URL here
