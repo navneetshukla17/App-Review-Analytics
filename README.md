@@ -11,6 +11,12 @@
     <a href="#deployment">Deployment</a> •
     <a href="#project-structure">Project Structure</a>
   </p>
+
+  <p align="center">
+    <a href="https://review-insights.onrender.com" target="_blank">
+      <img src="https://img.shields.io/badge/Live_App-review--insights.onrender.com-success?style=for-the-badge&logo=render" alt="Live App" />
+    </a>
+  </p>
 </div>
 
 ---
@@ -32,7 +38,7 @@
 - **Backend:** Python, FastAPI, Uvicorn
 - **Database:** SQLite
 - **Scraping:** `google-play-scraper`, `app_store_scraper`
-- **Deployment:** Docker, Fly.io
+- **Deployment:** Docker, Render (PaaS), Neon (PostgreSQL)
 
 ---
 
@@ -86,34 +92,22 @@ Open your browser to [http://localhost:8000](http://localhost:8000).
 
 ---
 
-## ☁️ Deployment (Fly.io)
+## ☁️ Deployment (Render + Neon)
 
-This project is configured to deploy seamlessly to [Fly.io](https://fly.io) using a **Multi-Stage Dockerfile** and a **Persistent Volume** for SQLite.
+This project is configured to deploy seamlessly to [Render](https://render.com) using a **Multi-Stage Dockerfile** and connects to a free [Neon](https://neon.tech) PostgreSQL database for persistent data storage.
 
-1. **Install Fly CLI**
-   Follow the [Fly.io installation guide](https://fly.io/docs/hands-on/install-flyctl/).
+1. **Set up PostgreSQL on Neon**
+   - Create a free account on [Neon.tech](https://neon.tech).
+   - Create a new project and copy the provided `postgresql://...` connection string.
 
-2. **Login to Fly.io**
-   ```bash
-   fly auth login
-   ```
+2. **Deploy to Render**
+   - Create a free account on [Render.com](https://render.com) and link your GitHub account.
+   - Click **New +** and select **Blueprint**.
+   - Connect this repository. Render will automatically read the `render.yaml` configuration.
+   - When prompted, paste your Neon connection string into the `DATABASE_URL` field.
+   - Click **Deploy Blueprint**.
 
-3. **Provision a Persistent Volume**
-   Because cloud servers are ephemeral, we use a volume to ensure the SQLite database (`review_data.db`) persists across deployments.
-   ```bash
-   fly volumes create review_data_vol --region ewr --size 1
-   ```
-
-4. **Deploy the App**
-   The deployment uses the configurations found in `Dockerfile` and `fly.toml`.
-   ```bash
-   fly deploy
-   ```
-
-5. **Open the App**
-   ```bash
-   fly open
-   ```
+Render will automatically build the React frontend, package the Python backend, and serve the application live!
 
 ---
 
@@ -138,7 +132,7 @@ This project is configured to deploy seamlessly to [Fly.io](https://fly.io) usin
 │   └── dist/              # Built production static assets (created via npm run build)
 │
 ├── Dockerfile             # Multi-stage Docker build config
-├── fly.toml               # Fly.io deployment and volume configuration
+├── render.yaml            # Render Blueprint deployment configuration
 └── README.md              # You are here!
 ```
 
