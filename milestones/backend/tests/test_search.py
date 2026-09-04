@@ -12,28 +12,32 @@ class FakeScraper:
 
 
 def test_search_apps_single_platform():
-    fake = FakeScraper(["candidate"])
+    from app.scrapers.base import AppCandidate
+    fake_candidate = AppCandidate(platform="fake", store_app_id="1", name="Candidate")
+    fake = FakeScraper([fake_candidate])
     old = SCRAPERS["playstore"]
     SCRAPERS["playstore"] = fake
     try:
         results, errors = search_apps("spotify", "playstore")
-        assert results == ["candidate"]
+        assert results == [fake_candidate]
         assert errors == []
     finally:
         SCRAPERS["playstore"] = old
 
 
 def test_search_apps_isolates_platform_failures():
+    from app.scrapers.base import AppCandidate
+    fake_candidate = AppCandidate(platform="fake", store_app_id="2", name="Candidate 2")
     def boom(query, limit=20):
         raise RuntimeError("store down")
 
     old_ps, old_as = SCRAPERS["playstore"], SCRAPERS["appstore"]
     try:
-        SCRAPERS["playstore"] = FakeScraper(["play_candidate"])
+        SCRAPERS["playstore"] = FakeScraper([fake_candidate])
         SCRAPERS["appstore"] = FakeScraper([])
         SCRAPERS["appstore"].search = boom
         results, errors = search_apps("spotify", "both")
-        assert results == ["play_candidate"]
+        assert results == [fake_candidate]
         assert errors and errors[0]["platform"] == "appstore"
     finally:
         SCRAPERS["playstore"], SCRAPERS["appstore"] = old_ps, old_as
