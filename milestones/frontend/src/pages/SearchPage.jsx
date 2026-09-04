@@ -220,6 +220,7 @@ function FetchReviewsModal({ candidate, onClose, onFetch }) {
 export default function SearchPage() {
   const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState('both');
+  const [reviewLimit, setReviewLimit] = useState(null);
   const [results, setResults] = useState([]);
   const [errors, setErrors] = useState([]);
   const [searching, setSearching] = useState(false);
