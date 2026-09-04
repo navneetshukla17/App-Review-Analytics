@@ -35,4 +35,4 @@ ENV PORT=8000
 ENV DB_PATH=/app/data/review_data.db
 
 # Run uvicorn
-CMD ["uvicorn", "backend.app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
