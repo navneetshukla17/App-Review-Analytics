@@ -1,0 +1,7 @@
+node_modules/
+backend/.venv/
+.git/
+.env
+__pycache__/
+*.pyc
+backend/review_data.db
