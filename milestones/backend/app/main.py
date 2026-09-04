@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -8,7 +9,8 @@ from .db import Database
 from .jobs import JobRegistry
 from .routers import apps, jobs, reviews
 
-DB_PATH = Path(__file__).resolve().parent.parent / "review_data.db"
+_default_db_path = Path(__file__).resolve().parent.parent / "review_data.db"
+DB_PATH = Path(os.getenv("DB_PATH", _default_db_path))
 FRONTEND_DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 
 
