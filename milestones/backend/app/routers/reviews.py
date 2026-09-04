@@ -5,7 +5,7 @@ import json
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import StreamingResponse
 
-from app.schemas import ReviewOut, ReviewPage
+from ..schemas import ReviewOut, ReviewPage
 
 router = APIRouter(prefix="/api/apps", tags=["reviews"])
 

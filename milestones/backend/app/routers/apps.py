@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query, Request
 
-from app.scrapers.search import search_apps, SCRAPERS
-from app.schemas import AppCreate, AppOut, AppSearchResult, SearchResponse
+from ..scrapers.search import search_apps, SCRAPERS
+from ..schemas import AppCreate, AppOut, AppSearchResult, SearchResponse
 
 router = APIRouter(prefix="/api/apps", tags=["apps"])
 

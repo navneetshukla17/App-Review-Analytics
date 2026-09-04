@@ -2,8 +2,8 @@ import threading
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
-from app.jobs import run_fetch_job
-from app.schemas import JobOut
+from ..jobs import run_fetch_job
+from ..schemas import JobOut
 
 router = APIRouter(prefix="/api", tags=["jobs"])
 
