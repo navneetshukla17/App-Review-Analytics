@@ -28,7 +28,18 @@ def create_app(db: Database, registry: JobRegistry) -> FastAPI:
     app.include_router(reviews.router)
     app.include_router(jobs.router)
     if FRONTEND_DIST.exists():
-        app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+        from fastapi.responses import FileResponse
+        
+        # Serve static assets directly
+        app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets", html=True), name="assets")
+        
+        # Serve index.html for all other routes to support client-side routing (React Router)
+        @app.get("/{full_path:path}", include_in_schema=False)
+        def serve_react_app(full_path: str):
+            if full_path.startswith("api/"):
+                from fastapi import HTTPException
+                raise HTTPException(status_code=404, detail="API route not found")
+            return FileResponse(FRONTEND_DIST / "index.html")
     return app
 
 
