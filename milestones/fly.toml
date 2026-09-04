@@ -1,0 +1,19 @@
+# fly.toml app configuration file generated for review-insights
+
+app = "review-insights-prod" # Note: user may need to change this if taken
+primary_region = "ewr"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[[mounts]]
+  source = "review_data_vol"
+  destination = "/app/data"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
